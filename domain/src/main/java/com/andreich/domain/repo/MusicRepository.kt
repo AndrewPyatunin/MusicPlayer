@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MusicRepository {
 
-    fun getTrack(id: Int): Track
+    suspend fun getTrack(id: Int): Track?
 
     fun getSavedTracks(query: String?): Flow<List<Track>>
 

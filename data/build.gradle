@@ -42,5 +42,10 @@ dependencies {
     implementation libs.room.runtime
     implementation libs.room.ktx
 
+    implementation libs.retrofit.converter
+    implementation libs.retrofit
+
+    implementation libs.okhttp3
+
     implementation project(":domain")
 }

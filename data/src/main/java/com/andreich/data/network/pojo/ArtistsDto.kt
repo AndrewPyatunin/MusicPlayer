@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class ArtistsDto(
 
-    @SerializedName("data"  ) val data  : ArrayList<ArtistDataDto> = arrayListOf(),
-    @SerializedName("total" ) val total : Int?            = null
+    @SerializedName("data") val data: ArrayList<ArtistDto> = arrayListOf(),
+    @SerializedName("total") val total: Int? = null
 )

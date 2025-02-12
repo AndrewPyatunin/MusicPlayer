@@ -8,7 +8,15 @@ class MusicDataSourceImpl(
     private val dao: MusicDao
 ) : MusicDataSource {
 
-    override suspend fun getTrack(id: Int): TrackEntity? {
+    override suspend fun insertTrack(trackEntity: TrackEntity) {
+        dao.insertTrack(trackEntity)
+    }
+
+    override suspend fun insertTrackList(list: List<TrackEntity>) {
+        dao.insertTrackList(list)
+    }
+
+    override fun getTrack(id: Int): Flow<TrackEntity> {
         return dao.getTrack(id)
     }
 

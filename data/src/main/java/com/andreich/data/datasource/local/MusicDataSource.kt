@@ -5,7 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface MusicDataSource {
 
-    suspend fun getTrack(id: Int): TrackEntity?
+    suspend fun insertTrack(trackEntity: TrackEntity)
 
-    fun getSavedTracks(query: String?): Flow<List<TrackEntity>>
+    suspend fun insertTrackList(list: List<TrackEntity>)
+
+    fun getTrack(id: Int): Flow<TrackEntity>
+
+    fun getSavedTracks(query: String? = null): Flow<List<TrackEntity>>
 }

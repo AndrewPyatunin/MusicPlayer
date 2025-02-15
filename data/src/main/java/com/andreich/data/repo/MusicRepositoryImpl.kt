@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class MusicRepositoryImpl(
+class MusicRepositoryImpl @Inject constructor(
     private val musicDataSource: MusicDataSource,
     private val remoteDataSource: RemoteDataSource,
     private val trackEntityToModelMapper: EntityToModelMapper<TrackEntity, Track>,

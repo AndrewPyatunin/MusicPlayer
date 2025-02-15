@@ -2,8 +2,9 @@ package com.andreich.data.mapper
 
 import com.andreich.data.entity.ArtistEntity
 import com.andreich.domain.model.Artist
+import javax.inject.Inject
 
-class ArtistEntityToArtistMapper<I, O> : EntityToModelMapper<ArtistEntity, Artist> {
+class ArtistEntityToArtistMapper @Inject constructor() : EntityToModelMapper<ArtistEntity, Artist> {
 
     override fun map(fromEntity: ArtistEntity): Artist {
         return with(fromEntity) {

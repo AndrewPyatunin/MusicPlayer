@@ -27,4 +27,6 @@ abstract class MusicDatabase : RoomDatabase() {
             }
         }
     }
+
+    abstract fun musicDao(): MusicDao
 }

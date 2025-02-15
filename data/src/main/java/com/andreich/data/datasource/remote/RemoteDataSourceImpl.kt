@@ -4,8 +4,9 @@ import com.andreich.data.network.ApiService
 import com.andreich.data.network.pojo.SearchResultDto
 import com.andreich.data.network.pojo.TrackDetailDto
 import com.andreich.data.network.pojo.TracksDto
+import javax.inject.Inject
 
-class RemoteDataSourceImpl(
+class RemoteDataSourceImpl @Inject constructor(
     private val apiService: ApiService
 ) : RemoteDataSource {
 

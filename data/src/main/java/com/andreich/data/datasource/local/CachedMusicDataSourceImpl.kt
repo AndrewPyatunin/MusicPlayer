@@ -3,8 +3,9 @@ package com.andreich.data.datasource.local
 import com.andreich.data.database.CachedTrackDao
 import com.andreich.data.entity.CachedTrackEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CachedMusicDataSourceImpl(
+class CachedMusicDataSourceImpl @Inject constructor(
     private val dao: CachedTrackDao
 ) : CachedMusicDataSource {
 

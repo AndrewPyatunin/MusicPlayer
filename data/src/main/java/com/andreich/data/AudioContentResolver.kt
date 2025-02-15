@@ -6,10 +6,13 @@ import android.database.Cursor
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.andreich.domain.model.AudioModel
+import com.andreich.domain.repo.LocalRepository
+import javax.inject.Inject
 
-class AudioContentResolver(
+class AudioContentResolver @Inject constructor(
     private val context: Context
-) {
+) : LocalRepository {
 
     private var mCursor: Cursor? = null
 
@@ -30,11 +33,11 @@ class AudioContentResolver(
     private val sortOrder = "${MediaStore.Audio.AudioColumns.DISPLAY_NAME} ASC"
 
     @WorkerThread
-    fun getAudioData(): List<Audio> {
+    override fun getAudioData(): List<AudioModel> {
         return getCursorData()
     }
 
-    private fun getCursorData(): MutableList<Audio> {
+    private fun getCursorData(): List<AudioModel> {
         val audioList = mutableListOf<Audio>()
 
         mCursor = context.contentResolver.query(
@@ -84,6 +87,10 @@ class AudioContentResolver(
                 }
             }
         }
-        return audioList
+        return audioList.map {
+            with(it) {
+                AudioModel(uri.toString(), displayName, id, artist, data, duration, title, album)
+            }
+        }.toList()
     }
 }

@@ -3,8 +3,9 @@ package com.andreich.data.datasource.local
 import com.andreich.data.database.MusicDao
 import com.andreich.data.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class MusicDataSourceImpl(
+class MusicDataSourceImpl @Inject constructor(
     private val dao: MusicDao
 ) : MusicDataSource {
 

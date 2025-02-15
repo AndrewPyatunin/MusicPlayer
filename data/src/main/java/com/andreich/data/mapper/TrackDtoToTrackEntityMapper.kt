@@ -6,8 +6,9 @@ import com.andreich.data.entity.TrackEntity
 import com.andreich.data.network.pojo.AlbumDataDto
 import com.andreich.data.network.pojo.ArtistDto
 import com.andreich.data.network.pojo.TrackDto
+import javax.inject.Inject
 
-class TrackDtoToTrackEntityMapper(
+class TrackDtoToTrackEntityMapper @Inject constructor(
     private val albumDataDtoMapper: DtoMapper<AlbumDataDto, AlbumEntity>,
     private val artistDtoMapper: DtoMapper<ArtistDto, ArtistEntity>
 ): DtoMapper<TrackDto, TrackEntity> {

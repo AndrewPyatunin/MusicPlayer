@@ -2,8 +2,9 @@ package com.andreich.data.mapper
 
 import com.andreich.data.entity.AlbumEntity
 import com.andreich.domain.model.Album
+import javax.inject.Inject
 
-class AlbumEntityToAlbumMapper : EntityToModelMapper<AlbumEntity, Album> {
+class AlbumEntityToAlbumMapper @Inject constructor() : EntityToModelMapper<AlbumEntity, Album> {
 
     override fun map(fromEntity: AlbumEntity): Album {
         return with(fromEntity) {

@@ -23,3 +23,6 @@ rootProject.name = "Music Player"
 include ':app'
 include ':domain'
 include ':data'
+include ':feature:music_player'
+include ':core:ui'
+include ':feature:common'

@@ -13,6 +13,7 @@ abstract class MusicDatabase : RoomDatabase() {
 
     companion object {
 
+        @Volatile
         var instance: MusicDatabase? = null
         val LOCK = Any()
         private const val DB_NAME = "music_database.db"

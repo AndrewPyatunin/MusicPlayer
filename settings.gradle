@@ -21,8 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Music Player"
 include ':app'
-include ':domain'
-include ':data'
-include ':feature:music_player'
+include ':musicplayer-domain'
+include ':muciplayer-data'
 include ':core:ui'
-include ':feature:common'
+include ':musicplayer-database'
+include ':musicplayer-network'
+include ':musicplayer-feature'

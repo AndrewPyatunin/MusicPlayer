@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.asStateFlow
 
 abstract class BaseViewModel : ViewModel() {
 
-    private val _state = MutableStateFlow<BaseUiState>(BaseUiState(emptyList(), false))
+    val _state = MutableStateFlow(BaseUiState(emptyList(), false))
     val state = _state.asStateFlow()
 
     private val _news = MutableStateFlow<BaseUiNews>(BaseUiNews.Initial)
     val news = _news.asStateFlow()
 
     fun sendIntent(intent: BaseUiIntent) {
-        when(intent) {
+        when (intent) {
             is BaseUiIntent.LoadTracks -> loadTracks()
 
             is BaseUiIntent.ChooseTrack -> navigateTo(intent.track)

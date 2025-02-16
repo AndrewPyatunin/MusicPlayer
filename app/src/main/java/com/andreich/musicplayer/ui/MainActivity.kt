@@ -13,18 +13,34 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import com.andreich.musicplayer.MyApp
 import com.andreich.musicplayer.R
+import com.andreich.navigation.EventBus
+import com.andreich.navigation.NavigationEvent
+import com.andreich.navigation.Navigator
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Navigator {
+
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         if (!checkPermission()) {
             requestPermission()
         }
+        (application as MyApp).component.inject(this)
         setContentView(R.layout.activity_main)
+
+        navController = findNavController(R.id.fragment_container)
+        EventBus.subscribe(NavigationEvent::class.java, this::onEvent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.unsubscribe(NavigationEvent::class.java, this::onEvent)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -92,6 +108,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun navigate(event: NavigationEvent) {
+        onEvent(event)
+    }
+
+    private fun onEvent(event: NavigationEvent) {
+        when (event) {
+            is NavigationEvent.NavigateToFeatureMusicPlayer -> {
+
             }
         }
     }

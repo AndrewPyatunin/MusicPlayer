@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class BaseSearchFragment : Fragment() {
+abstract class BaseSearchFragment : Fragment(R.layout.fragment_base_search) {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e("MainActivity", throwable.message, throwable)
@@ -121,9 +121,6 @@ abstract class BaseSearchFragment : Fragment() {
                 viewModel.news.collect { state ->
                     when(state) {
                         BaseUiNews.Initial -> {}
-                        is BaseUiNews.NavigateTo -> {
-                            navigateTo(state.fragment)
-                        }
                         is BaseUiNews.ShowToast -> {
                             showToast(state.message)
                         }
@@ -136,8 +133,6 @@ abstract class BaseSearchFragment : Fragment() {
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
-
-    abstract fun navigateTo(fragment: Fragment)
 
     override fun onDestroyView() {
         super.onDestroyView()

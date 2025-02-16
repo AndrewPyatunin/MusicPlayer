@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 app:iconifiedByDefault="false"
                 app:queryBackground="@android:color/transparent"
-                app:queryHint="Search movie..." />
+                app:queryHint="Search music..." />
 
     </com.google.android.material.card.MaterialCardView>
 

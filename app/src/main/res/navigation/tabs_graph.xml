@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tabs_graph"
-    app:startDestination="@id/placeholder">
-
-    <fragment android:id="@+id/placeholder" />
+    app:startDestination="@id/home">
+    <include app:graph="@navigation/remote" />
+    <include app:graph="@navigation/home" />
 </navigation>

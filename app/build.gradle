@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.kapt)
 }
 
 android {
@@ -39,21 +40,29 @@ android {
 
 dependencies {
 
+    implementation "androidx.startup:startup-runtime:1.2.0"
+
     implementation libs.androidx.media3.exoplayer
     implementation libs.androidx.media3.session
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
 
     implementation libs.dagger
-    annotationProcessor libs.dagger.compiler
+    kapt libs.dagger.compiler
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
-    implementation project(':data')
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+
+    implementation project(':musicplayer-database')
+    implementation project(':musicplayer-network')
+    implementation project(':muciplayer-data')
+    implementation project(':musicplayer-domain')
+    implementation project(':musicplayer-feature')
+    implementation project(':core:ui')
 }

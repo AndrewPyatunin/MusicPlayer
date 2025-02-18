@@ -15,7 +15,7 @@ class SearchTrackDtoMapper(
     override fun map(fromDto: SearchTrackDto): TrackEntity {
         return with(fromDto) {
             TrackEntity(
-                id = id?.toIntOrNull() ?: 0,
+                id = id?.toLongOrNull() ?: 0L,
                 title = title ?: "",
                 artistName = artist?.name ?: "",
                 artistEntity = artist?.let { artistDtoMapper.map(it) },

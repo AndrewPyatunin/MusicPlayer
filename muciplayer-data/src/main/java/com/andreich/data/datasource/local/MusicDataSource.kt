@@ -9,7 +9,9 @@ interface MusicDataSource {
 
     suspend fun insertTrackList(list: List<TrackEntity>)
 
-    fun getTrack(id: Int): Flow<TrackEntity>
+    suspend fun clearDatabase()
+
+    fun getTrack(id: Long): Flow<TrackEntity>
 
     fun getSavedTracks(query: String? = null): Flow<List<TrackEntity>>
 }

@@ -8,7 +8,7 @@ class GetRemoteTracksUseCase(
     private val repository: MusicRepository
 ) {
 
-    operator fun invoke(): Flow<List<Track>> {
-        return repository.getTracks()
+    operator fun invoke(fromPlayer: Boolean = false): Flow<List<Track>> {
+        return repository.getTracks(fromPlayer)
     }
 }

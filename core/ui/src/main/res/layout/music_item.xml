@@ -30,6 +30,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:visibility="gone"
+            android:foregroundGravity="center"
             app:layout_constraintEnd_toStartOf="@id/guideline_music_item"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

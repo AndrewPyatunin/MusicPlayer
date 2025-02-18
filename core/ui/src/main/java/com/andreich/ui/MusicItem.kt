@@ -3,7 +3,7 @@ package com.andreich.ui
 import android.net.Uri
 
 data class MusicItem(
-    val id: Int,
+    val id: Long,
     val url: String,
     val uri: Uri? = null,
     val displayName: String,
@@ -11,5 +11,6 @@ data class MusicItem(
     val data: String,
     val duration: Int,
     val title: String,
-    val album: String
+    val album: String,
+    val cover: String? = null
 )

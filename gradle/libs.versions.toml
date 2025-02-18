@@ -75,7 +75,7 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 android-library = { id = "com.android.library", version.ref = "agp" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 parcelize = { id = "kotlin-parcelize" }
-navigation_safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
+navigation_safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 kapt = { id = "kotlin-kapt" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
 

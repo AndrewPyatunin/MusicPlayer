@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Track(
-    val id: Int,
+    val id: Long,
     val title: String,
     val album: Album? = null,
     val artist: Artist? = null,

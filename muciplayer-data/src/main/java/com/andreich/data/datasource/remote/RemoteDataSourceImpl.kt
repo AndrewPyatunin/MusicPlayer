@@ -13,7 +13,7 @@ class RemoteDataSourceImpl(
         return apiService.getChartTracks()
     }
 
-    override suspend fun getTrack(id: Int): TrackDetailDto {
+    override suspend fun getTrack(id: Long): TrackDetailDto {
         return apiService.getTrack(id)
     }
 

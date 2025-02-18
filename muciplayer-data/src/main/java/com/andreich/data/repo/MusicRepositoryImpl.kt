@@ -1,5 +1,6 @@
 package com.andreich.data.repo
 
+import android.util.Log
 import com.andreich.data.datasource.local.MusicDataSource
 import com.andreich.data.datasource.remote.RemoteDataSource
 import com.andreich.data.mapper.DtoMapper
@@ -26,7 +27,7 @@ class MusicRepositoryImpl(
     private val chartTrackMapper: DtoMapper<TrackDto, TrackEntity>
 ) : MusicRepository {
 
-    override suspend fun getTrack(id: Int): Flow<Track> {
+    override suspend fun getTrack(id: Long): Flow<Track> {
         return flow {
             var localTrack = musicDataSource.getTrack(id).firstOrNull()
             if (localTrack == null) {
@@ -39,6 +40,10 @@ class MusicRepositoryImpl(
             }
             emit(trackEntityToModelMapper.map(localTrack))
         }.flowOn(Dispatchers.IO)
+    }
+
+    override suspend fun clearDatabase() {
+        musicDataSource.clearDatabase()
     }
 
     override fun getSavedTracks(query: String?): Flow<List<Track>> {
@@ -71,16 +76,25 @@ class MusicRepositoryImpl(
         }.flowOn(Dispatchers.IO)
     }
 
-    override fun getTracks(): Flow<List<Track>> {
+    override fun getTracks(fromPlayer: Boolean): Flow<List<Track>> {
+        Log.d("MUSIC_PLAYER_repo", "get_tracks_repository $fromPlayer")
         return flow {
-            val tracks = remoteDataSource.getChartTracks().data.map {
-                chartTrackMapper.map(it)
+            if (!fromPlayer) {
+                val tracks = remoteDataSource.getChartTracks().data.map {
+                    Log.d("MUSIC_PLAYER_network_tracks", it.toString())
+                    chartTrackMapper.map(it)
+                }
+                Log.d("MUSIC_PLAYER_network_tracks_mapped", tracks.toString())
+                musicDataSource.insertTrackList(tracks)
+                Log.d("MUSIC_PLAYER_repo", "get_tracks ${tracks.toString()}")
             }
-            musicDataSource.insertTrackList(tracks)
+
             musicDataSource.getSavedTracks().collect { list ->
+                Log.d("MUSIC_PLAYER_network_tracks_saved", list.toString())
                 list.map {
                     trackEntityToModelMapper.map(it)
                 }.apply {
+                    Log.d("MUSIC_PLAYER_repo_emit", this.toString())
                     emit(this)
                 }
             }

@@ -1,5 +1,6 @@
 package com.andreich.musicplayer.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,13 +16,17 @@ class TabsFragment: Fragment() {
 
     private lateinit var binding: FragmentTabsBinding
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity?.application as MyApp).component.inject(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTabsBinding.inflate(inflater, container, false)
-        (activity?.application as MyApp).component.inject(this)
         return binding.root
     }
 
@@ -30,5 +35,4 @@ class TabsFragment: Fragment() {
         val navHost = childFragmentManager.findFragmentById(R.id.tabsContainer) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNavView, navHost.navController)
     }
-
 }

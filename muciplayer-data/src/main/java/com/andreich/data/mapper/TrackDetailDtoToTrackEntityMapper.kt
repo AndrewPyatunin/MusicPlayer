@@ -15,7 +15,7 @@ class TrackDetailDtoToTrackEntityMapper(
     override fun map(fromDto: TrackDetailDto): TrackEntity {
         return with(fromDto) {
             TrackEntity(
-                id = id?.toIntOrNull() ?: 0,
+                id = id?.toLongOrNull() ?: 0L,
                 title = title ?: "",
                 artistName = artist?.name ?: "",
                 albumEntity = album?.let { albumDtoMapper.map(it) },

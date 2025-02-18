@@ -1,12 +1,13 @@
 package com.andreich.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 abstract class BaseViewModel : ViewModel() {
 
-    val _state = MutableStateFlow(BaseUiState(emptyList(), false))
+    protected val _state = MutableStateFlow(BaseUiState(emptyList(), false))
     val state = _state.asStateFlow()
 
     private val _news = MutableStateFlow<BaseUiNews>(BaseUiNews.Initial)
@@ -14,11 +15,15 @@ abstract class BaseViewModel : ViewModel() {
 
     fun sendIntent(intent: BaseUiIntent) {
         when (intent) {
-            is BaseUiIntent.LoadTracks -> loadTracks()
+            is BaseUiIntent.LoadTracks -> {
+                Log.d("MUSIC_TRACK", "loadTracksIntent")
+                loadTracks()
+            }
 
             is BaseUiIntent.ChooseTrack -> navigateTo(intent.track)
 
             is BaseUiIntent.SearchTrack -> searchTrack(query = intent.query)
+
         }
     }
 
@@ -26,5 +31,7 @@ abstract class BaseViewModel : ViewModel() {
 
     abstract fun loadTracks()
 
-    abstract fun navigateTo(track: MusicItem)
+    private fun navigateTo(track: MusicItem) {
+        _news.value = BaseUiNews.NavigateTo(track)
+    }
 }

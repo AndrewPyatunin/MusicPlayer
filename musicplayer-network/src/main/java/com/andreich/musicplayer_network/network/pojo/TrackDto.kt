@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TrackDto(
 
-    @SerializedName("id") var id: Int? = null,
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("title") var title: String? = null,
     @SerializedName("title_short") var titleShort: String? = null,
     @SerializedName("title_version") var titleVersion: String? = null,

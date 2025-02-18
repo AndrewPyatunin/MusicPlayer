@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/home_nav"
+    <item android:id="@+id/home"
         android:title="@string/home"
         android:orderInCategory="1"
         app:showAsAction="ifRoom"
         android:icon="@drawable/my_home"/>
 
-    <item android:id="@+id/remote_nav"
-        android:title="Remote"
+    <item android:id="@+id/remote"
+        android:title="@string/remote"
         android:orderInCategory="2"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/my_global"/>
 </menu>

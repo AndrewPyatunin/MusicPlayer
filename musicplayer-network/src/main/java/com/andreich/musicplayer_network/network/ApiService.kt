@@ -22,5 +22,5 @@ interface ApiService {
     suspend fun searchTrack(@Query(SEARCH_QUERY) query: String): SearchResultDto
 
     @GET("$TRACK_URL/{$TRACK_ID}")
-    suspend fun getTrack(@Path(TRACK_ID) trackId: Int): TrackDetailDto
+    suspend fun getTrack(@Path(TRACK_ID) trackId: Long): TrackDetailDto
 }

@@ -1,133 +1,200 @@
 package com.andreich.musicplayer_feature.music_player.ui
 
 import android.content.ComponentName
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.session.SessionToken
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import androidx.media3.ui.PlayerView
-import com.andreich.musicplayer_feature.common.ViewModelFactory
+import androidx.navigation.fragment.navArgs
+import com.andreich.musicplayer_feature.MusicPlayerComponentDependencies
 import com.andreich.musicplayer_feature.MusicService
 import com.andreich.musicplayer_feature.R
+import com.andreich.musicplayer_feature.common.ArgumentType
+import com.andreich.musicplayer_feature.common.ViewModelFactory
+import com.andreich.musicplayer_feature.databinding.FragmentMusicPlayerBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val URI = "\n" +
-        "https://dl.zaycev.net/track_auth/17577802/BFkvhxHnjQLH6QwRcC3pEoRQvZ2U9fggBTAcajVJWDY5n2xJvAY3TAd32LNEFjaJxDtvMWstnNjTsekooWiZ4abMHTbeMzYB25GY1hqDWBuzvyDNSXZhsY18rKMW2P5viwewiy5JZCR7aRHavufakoUNDFDBe4WGAYk8N3LDtNigfDLodAHEaFPqbjChyvobZVwPKi4nB3VyDnSqGEWxK5Xvdz79edRRW3DLny4mQa2dCfH73rDVsV9dNCWEBZXwiJBhnuEHCWQTPXUkhPTXkvkFcpgNGHTTg6o6W6mQY163JmQtJ3XuLH7wpFQd72Jd75KSTfWnVDRv84tCpG6QukSmGoQBdw"
-private const val URI_2 = "https://dl.zaycev.net/track/25020728/7oVnu1M3DcJ2644QznYLG74qf7LLBhHEBdebXDJ8n2e2CkQaEXo3kFrSo38s1aiD93vWiGQ7aoVrxQnJKsAhPZ3dMvTxarY3gSxbRbUH8p2xSaXYQNhPPZUbukkv8eHGcN1gDS28UC2pFKyaCRxKErLXZKZctxSJjze9hV2C2sYHsAKQ24Z3h1tUNXf4gPyT9Fec3mMy3yWX15D2KChx9MJFLFEsgcaveMtJUiFBfESZ7kQD491YrBrHCRYAJ2EZxbX2sZ7JgKjUGe2oC4wrkfK2eX7aNNWRaf7cR6yKBdg6THRipLxoFKZMQrh5yk3vM8vnh6pqhfdjUgFc3N5rqGmVuP3HG"/*?hdnea=exp=1739522830~acl=/api/1/1/c/4/d/0/c4d7dbe3524ba59d2ad06d8cccd2484f.mp3*~data=user_id=0,application_id=42~hmac=f07140e8ec4e50f81aeead9dde7d2b3796c2c62cd62bafce90488b25eb002c3e*/
-private const val URI_3 = "https://cdnt-preview.dzcdn.net/api/1/1/e/9/2/0/e929fb0e6a929aa247259380f3466e82.mp3?hdnea=exp=1739548158~acl=/api/1/1/e/9/2/0/e929fb0e6a929aa247259380f3466e82.mp3*~data=user_id=0,application_id=42~hmac=d675bee9e4ed024f389db6580800caea870d0a337adaea2d4d4d1a3ca21182e0"
+
 class MusicPlayerFragment : Fragment() {
+
+    private val safeArgs by navArgs<MusicPlayerFragmentArgs>()
+
+    private var _binding: FragmentMusicPlayerBinding? = null
+    private val binding: FragmentMusicPlayerBinding
+        get() = _binding ?: throw RuntimeException("Binding is null!")
+
+    private val component by lazy { (requireActivity().applicationContext as? MusicPlayerComponentDependencies)?.getAudioPlayerComponent() }
+
+    val sessionToken by lazy {
+        SessionToken(
+            requireContext(),
+            ComponentName(requireContext(), MusicService::class.java)
+        )
+    }
+
+    val controllerFuture by lazy {
+        MediaController.Builder(requireContext(), sessionToken).buildAsync()
+    }
+
+    val controller by lazy { controllerFuture.get() }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    lateinit var playerView: PlayerView
+    private val playerView: PlayerView by lazy { binding.playerView }
 
-    private val viewModel by lazy { ViewModelProvider(this, viewModelFactory)[MusicPlayerViewModel::class.java] }
+    private val viewModel by lazy {
+        ViewModelProvider(
+            this,
+            viewModelFactory
+        )[MusicPlayerViewModel::class.java]
+    }
 
+    @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.sendIntent(UserIntent.LoadTracks)
+        Log.d("MUSIC_PLAYER", "created")
+        component?.inject(this)
+        Log.d("MUSIC_PLAYER_SAFE_ARGS", safeArgs.type.toString())
+        when (safeArgs.type) {
+            ArgumentType.REMOTE -> viewModel.sendIntent(UserIntent.LoadRemoteTracks)
+            ArgumentType.HOME -> viewModel.sendIntent(UserIntent.LoadHomeTracks)
+        }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        observeViewModel()
-        return inflater.inflate(R.layout.fragment_music_player, container, false)
+    ): View {
+        _binding = FragmentMusicPlayerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playerView = view.findViewById(R.id.player_view)
+        observeViewModel()
     }
 
     @OptIn(UnstableApi::class)
     override fun onStart() {
         super.onStart()
-        val sessionToken = SessionToken(requireContext(), ComponentName(requireContext(), MusicService::class.java))
-        val mediaItem = MediaItem.fromUri(URI)
-        val mediaItem2 = MediaItem.fromUri(URI_2)
-        val mediaItem3 = MediaItem.fromUri(URI_3)
-//        Glide.with(this)
-//            .load(mediaItem.mediaMetadata.artworkUri)
-//            .centerCrop()
-//            .into(object : CustomTarget<Drawable>() {
-//                override fun onResourceReady(
-//                    resource: Drawable,
-//                    transition: Transition<in Drawable>?
-//                ) {
-//                    playerView.defaultArtwork = resource
-//                }
-//
-//                override fun onLoadCleared(placeholder: Drawable?) {
-//                }
-//            })
-        val controllerFuture = MediaController.Builder(requireContext(), sessionToken).buildAsync()
-        val mediaSource =
-            HlsMediaSource.Factory(DefaultHttpDataSource.Factory()).createMediaSource(mediaItem)
-        controllerFuture.addListener(
-            {
-                val controller = controllerFuture.get()
-                controller.setMediaItem(mediaItem)
-                controller.addMediaItem(mediaItem2)
-                controller.addMediaItem(mediaItem3)
-                controller.prepare()
-                controller.play()
-                // Call controllerFuture.get() to retrieve the MediaController.
-                // MediaController implements the Player interface, so it can be
-                // attached to the PlayerView UI component.
-                playerView.setPlayer(controllerFuture.get())
-            },
-            MoreExecutors.directExecutor()
-        )
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         playerView.player?.stop()
+        controller.removeListener(listener)
+        super.onDestroy()
+
     }
 
+    @OptIn(UnstableApi::class)
     private fun initPlayer(state: MusicPlayerState) {
+        controllerFuture.addListener({
+            controller.stop()
+            val mediaMetadata = controller.mediaMetadata
+            with(binding) {
+                albumTitle.text = mediaMetadata.albumTitle ?: "Unknown album"
+                artistName.text = mediaMetadata.artist ?: "Unknown artist"
+                trackTitle.text =
+                    resources.getString(R.string.track, mediaMetadata.title ?: "Unknown track")
+            }
+            try {
+                val firstItemIndex = state.playList.indexOfFirst {
+                    it.id == safeArgs.id
+                }
+                val listTracks = state.playList.map {
+                    Log.d("ARTWORK", it.picture.toString())
+                    MediaItem.Builder()
+                        .setUri(it.uri)
+                        .setMediaMetadata(
+                            MediaMetadata.Builder()
+                                .setAlbumArtist(it.artist)
+                                .setDisplayTitle(it.title)
+                                .setSubtitle(it.displayName)
+                                .setAlbumTitle(it.album)
+                                .setArtworkUri(it.picture)
+                                .build()
+                        )
+                        .build()
+                }.toList()
+                if (firstItemIndex != -1) controller.setMediaItem(listTracks[firstItemIndex])
+                controller.addMediaItems(listTracks.minusElement(listTracks[firstItemIndex]))
+                controller.prepare()
+                controller.play()
+                playerView.player = controller
+            } catch (e: Exception) {
+
+                Toast.makeText(this.requireContext(), e.message.toString(), Toast.LENGTH_SHORT)
+                    .show()
+            }
+            observeMetadata()
+        }, MoreExecutors.directExecutor())
     }
 
+    private val listener = object : Player.Listener {
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            val artworkUri = mediaMetadata.artworkUri
+            with(binding) {
+                albumTitle.text = mediaMetadata.albumTitle ?: "Unknown album"
+                artistName.text = mediaMetadata.artist ?: "Unknown artist"
+                trackTitle.text =
+                    resources.getString(R.string.track, mediaMetadata.title ?: "Unknown track")
+            }
+            Glide.with(this@MusicPlayerFragment).load(artworkUri)
+                .into(object : CustomTarget<Drawable>() {
+                    @OptIn(UnstableApi::class)
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        playerView.defaultArtwork = resource
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                })
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun observeMetadata() {
+        controller.addListener(listener)
+    }
+
+    @OptIn(UnstableApi::class)
     private fun observeViewModel() {
+        Log.d("MUSIC_PLAYER", "observe")
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
+                    Log.d("MUSIC_PLAYER_obeserve", it.playList.toString())
                     initPlayer(it)
                 }
             }
         }
 
-    }
-
-    companion object {
-
-        const val URI_VIDEO = "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
-
-        @JvmStatic
-        fun newInstance() =
-            MusicPlayerFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-            }
     }
 }

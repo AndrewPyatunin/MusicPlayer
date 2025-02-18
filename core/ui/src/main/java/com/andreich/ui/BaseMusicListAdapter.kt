@@ -31,7 +31,6 @@ class BaseMusicListAdapter :
     ListAdapter<MusicItem, BaseMusicListAdapter.MovieViewHolder>(DiffCallback) {
 
     var onMovieClick: OnMusicTrackClickListener? = null
-    private var tag: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view =
@@ -42,27 +41,37 @@ class BaseMusicListAdapter :
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         Log.d("FRAGMENT_ADAPTER", "$position")
         val musicItem = getItem(position)
+        Log.d("MUSIC_VIEW_HOLDER", musicItem.toString())
         musicItem?.let {
             with(holder) {
                 musicTitle.text = musicItem.title
                 author.text = musicItem.artist
                 musicImage.visibility = View.GONE
                 shimmerItem.visibility = View.VISIBLE
-                Glide.with(holder.itemView.context).load(musicItem.url)
-                    .into(object : CustomTarget<Drawable>() {
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
-                        ) {
-                            shimmerItem.visibility = View.GONE
-                            musicImage.visibility = View.VISIBLE
-                            musicImage.setImageDrawable(resource)
-                        }
+                if (musicItem.cover != null) {
+                    Glide.with(holder.itemView.context).load(musicItem.cover)
+                        .into(object : CustomTarget<Drawable>() {
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?
+                            ) {
+                                shimmerItem.visibility = View.GONE
+                                musicImage.visibility = View.VISIBLE
+                                musicImage.setImageDrawable(resource)
+                            }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            musicImage.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.music_default))
-                        }
-                    })
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                shimmerItem.visibility = View.GONE
+                                musicImage.visibility = View.VISIBLE
+                                musicImage.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.music_default))
+                            }
+                        })
+                } else {
+                    shimmerItem.visibility = View.GONE
+                    musicImage.visibility = View.VISIBLE
+                    musicImage.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.music_default))
+                }
+
                 itemView.setOnClickListener {
                     onMovieClick?.onMusicClick(musicItem)
                 }
@@ -77,10 +86,6 @@ class BaseMusicListAdapter :
         val musicImage = itemView.findViewById<ImageView>(R.id.music_image)
         val musicTitle = itemView.findViewById<TextView>(R.id.music_title)
         val author = itemView.findViewById<TextView>(R.id.author_name)
-
-        fun setFragmentTag(fragmentName: String) {
-            tag = fragmentName
-        }
     }
     interface OnMusicTrackClickListener {
 

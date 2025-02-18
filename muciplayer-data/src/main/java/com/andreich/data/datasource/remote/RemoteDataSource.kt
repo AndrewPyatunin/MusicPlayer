@@ -8,7 +8,7 @@ interface RemoteDataSource {
 
     suspend fun getChartTracks(): TracksDto
 
-    suspend fun getTrack(id: Int): TrackDetailDto
+    suspend fun getTrack(id: Long): TrackDetailDto
 
     suspend fun searchTrack(query: String): SearchResultDto
 }

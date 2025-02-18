@@ -10,12 +10,22 @@
         android:name="com.andreich.musicplayer_feature.music_home_list.MusicHomeFragment"
         android:label="MusicHomeFragment" >
         <action
-            android:id="@+id/action_musicHomeFragment_to_musicPlayerFragment2"
-            app:destination="@id/musicPlayerFragment2" />
+            android:id="@+id/action_musicHomeFragment_to_musicPlayerFragment"
+            app:destination="@id/musicPlayerFragment"
+            app:popUpTo="@id/home" />
     </fragment>
     <fragment
-        android:id="@+id/musicPlayerFragment2"
+        android:id="@+id/musicPlayerFragment"
         android:name="com.andreich.musicplayer_feature.music_player.ui.MusicPlayerFragment"
         android:label="fragment_music_player"
-        tools:layout="@layout/fragment_music_player" />
+        tools:layout="@layout/fragment_music_player" >
+        <argument
+            android:name="type"
+            app:argType="com.andreich.musicplayer_feature.common.ArgumentType"
+            android:defaultValue="HOME"/>
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
 </navigation>

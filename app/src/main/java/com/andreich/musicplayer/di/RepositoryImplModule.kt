@@ -1,11 +1,14 @@
 package com.andreich.musicplayer.di
 
+import android.content.Context
 import com.andreich.data.datasource.local.MusicDataSource
 import com.andreich.data.datasource.remote.RemoteDataSource
 import com.andreich.data.mapper.DtoMapper
 import com.andreich.data.mapper.EntityToModelMapper
+import com.andreich.data.repo.AudioContentResolver
 import com.andreich.data.repo.MusicRepositoryImpl
 import com.andreich.domain.model.Track
+import com.andreich.domain.repo.LocalRepository
 import com.andreich.domain.repo.MusicRepository
 import com.andreich.musicplayer_database.entity.TrackEntity
 import com.andreich.musicplayer_network.network.pojo.SearchTrackDto
@@ -34,5 +37,12 @@ class RepositoryImplModule {
             searchTrackDtoMapper,
             chartTrackMapper
         )
+    }
+
+    @Provides
+    fun provideLocalRepository(
+        context: Context
+    ): LocalRepository {
+        return AudioContentResolver(context)
     }
 }

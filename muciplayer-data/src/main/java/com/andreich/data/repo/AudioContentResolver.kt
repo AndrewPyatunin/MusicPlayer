@@ -1,4 +1,4 @@
-package com.andreich.data
+package com.andreich.data.repo
 
 import android.content.ContentUris
 import android.content.Context
@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.andreich.data.Audio
 import com.andreich.domain.model.AudioModel
 import com.andreich.domain.repo.LocalRepository
 
@@ -34,6 +35,20 @@ class AudioContentResolver(
     @WorkerThread
     override fun getAudioData(): List<AudioModel> {
         return getCursorData()
+    }
+
+    @WorkerThread
+    override fun searchTrack(query: String): List<AudioModel> {
+        return getCursorData().filter {
+            val query = query.trim()
+            it.title.contains(query, ignoreCase = true) || it.artist.contains(
+                query,
+                ignoreCase = true
+            ) || it.displayName.contains(query, ignoreCase = true) || it.album.contains(
+                query,
+                ignoreCase = true
+            )
+        }
     }
 
     private fun getCursorData(): List<AudioModel> {

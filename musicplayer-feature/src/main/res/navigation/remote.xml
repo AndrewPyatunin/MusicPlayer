@@ -9,13 +9,23 @@
         android:id="@+id/musicPlayerFragment"
         android:name="com.andreich.musicplayer_feature.music_player.ui.MusicPlayerFragment"
         android:label="fragment_music_player"
-        tools:layout="@layout/fragment_music_player" />
+        tools:layout="@layout/fragment_music_player" >
+        <argument
+            android:name="type"
+            app:argType="com.andreich.musicplayer_feature.common.ArgumentType"
+            android:defaultValue="REMOTE"/>
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
     <fragment
         android:id="@+id/musicRemoteFragment"
         android:name="com.andreich.musicplayer_feature.music_remote_list.ui.MusicRemoteFragment"
         android:label="MusicRemoteFragment" >
         <action
             android:id="@+id/action_musicRemoteFragment_to_musicPlayerFragment"
-            app:destination="@id/musicPlayerFragment" />
+            app:destination="@id/musicPlayerFragment"
+            app:popUpTo="@id/remote" />
     </fragment>
 </navigation>

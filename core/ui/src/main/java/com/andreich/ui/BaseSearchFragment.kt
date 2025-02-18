@@ -46,6 +46,7 @@ abstract class BaseSearchFragment : Fragment(R.layout.fragment_base_search) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.sendIntent(BaseUiIntent.LoadTracks)
         observeViewModel()
         observeNews()
     }
@@ -65,11 +66,12 @@ abstract class BaseSearchFragment : Fragment(R.layout.fragment_base_search) {
             recyclerMusic.layoutManager = LinearLayoutManager(requireContext())
             recyclerMusic.adapter = musicListAdapter
             onSearchQuery()
-            musicListAdapter.onMovieClick = object : BaseMusicListAdapter.OnMusicTrackClickListener {
-                override fun onMusicClick(musicItem: MusicItem) {
-                    viewModel.sendIntent(BaseUiIntent.ChooseTrack(musicItem))
+            musicListAdapter.onMovieClick =
+                object : BaseMusicListAdapter.OnMusicTrackClickListener {
+                    override fun onMusicClick(musicItem: MusicItem) {
+                        viewModel.sendIntent(BaseUiIntent.ChooseTrack(musicItem))
+                    }
                 }
-            }
         }
     }
 
@@ -103,6 +105,7 @@ abstract class BaseSearchFragment : Fragment(R.layout.fragment_base_search) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect { state ->
                     state.audioList.let {
+                        Log.d("MUSIC_PLAYER_base_observe", it.toString())
                         musicListAdapter.submitList(it)
                     }
                     withContext(Dispatchers.Main) {
@@ -119,16 +122,22 @@ abstract class BaseSearchFragment : Fragment(R.layout.fragment_base_search) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.news.collect { state ->
-                    when(state) {
+                    when (state) {
                         BaseUiNews.Initial -> {}
                         is BaseUiNews.ShowToast -> {
                             showToast(state.message)
+                        }
+
+                        is BaseUiNews.NavigateTo -> {
+                            navigate(state.route)
                         }
                     }
                 }
             }
         }
     }
+
+    abstract fun navigate(musicItem: MusicItem)
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

@@ -11,5 +11,6 @@ data class AudioModel(
     val data: String,
     val duration: Int,
     val title: String,
-    val album: String
+    val album: String,
+    val cover: String? = null
 )

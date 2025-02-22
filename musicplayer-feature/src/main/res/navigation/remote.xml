@@ -6,10 +6,23 @@
     app:startDestination="@id/musicRemoteFragment">
 
     <fragment
-        android:id="@+id/musicPlayerFragment"
+        android:id="@+id/musicRemoteFragment"
+        android:name="com.andreich.musicplayer_feature.music_remote_list.ui.MusicRemoteFragment"
+        android:label="Треки из Api"
+        tools:layout="@layout/fragment_music_remote" >
+        <action
+            android:id="@+id/action_musicRemoteFragment_to_musicPlayerFragment2"
+            app:destination="@id/musicPlayerFragment2"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/musicRemoteFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/musicPlayerFragment2"
         android:name="com.andreich.musicplayer_feature.music_player.ui.MusicPlayerFragment"
-        android:label="fragment_music_player"
+        android:label="Музыкальный плеер"
         tools:layout="@layout/fragment_music_player" >
+
         <argument
             android:name="type"
             app:argType="com.andreich.musicplayer_feature.common.ArgumentType"
@@ -19,13 +32,5 @@
             app:argType="long"
             android:defaultValue="0L" />
     </fragment>
-    <fragment
-        android:id="@+id/musicRemoteFragment"
-        android:name="com.andreich.musicplayer_feature.music_remote_list.ui.MusicRemoteFragment"
-        android:label="MusicRemoteFragment" >
-        <action
-            android:id="@+id/action_musicRemoteFragment_to_musicPlayerFragment"
-            app:destination="@id/musicPlayerFragment"
-            app:popUpTo="@id/remote" />
-    </fragment>
+
 </navigation>

@@ -1,10 +1,9 @@
 package com.andreich.musicplayer_feature.music_remote_list.ui
 
-import android.util.Log
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.andreich.domain.usecase.GetRemoteTracksUseCase
 import com.andreich.domain.usecase.SearchTrackUseCase
-import com.andreich.ui.BaseUiState
 import com.andreich.ui.BaseViewModel
 import com.andreich.ui.MusicItem
 import kotlinx.coroutines.launch
@@ -15,32 +14,31 @@ class MusicRemoteViewModel @Inject constructor(
     private val getRemoteTracksUseCase: GetRemoteTracksUseCase
 ) : BaseViewModel() {
 
-    override fun searchTrack(query: String) {
+    override fun searchTrack(query: String?) {
         viewModelScope.launch {
             searchTrackUseCase(query).collect {
-                it.map {
-                    with(it) {
+                it.map { track ->
+                    with(track) {
                         MusicItem(
                             id = id,
                             url = url ?: "",
-                            displayName = title,
-                            title = title,
+                            displayName = "",
                             artist = artist?.name ?: "",
                             album = album?.title ?: "",
                             duration = duration,
+                            title = title,
                             data = "",
-                            cover = cover
+                            cover = cover ?: album?.cover,
+                            uri = Uri.parse(filePath),
+                            coverBig = album?.coverBig
                         )
                     }
                 }.let {
-                    Log.d("MUSIC_PLAYER_search", it.toString())
-                    _state.value = BaseUiState(it, false)
+                    _state.value = state.value.copy(it, false)
                 }
 
             }
         }
-
-
     }
 
     override fun loadTracks() {
@@ -57,12 +55,13 @@ class MusicRemoteViewModel @Inject constructor(
                             duration = duration,
                             title = title,
                             data = "",
-                            cover = cover
+                            cover = cover ?: album?.cover,
+                            uri = Uri.parse(filePath),
+                            coverBig = album?.coverBig
                         )
                     }
                 }.let {
-                    Log.d("MUSIC_PLAYER_Remote", it.toString())
-                    _state.value = BaseUiState(it, false)
+                    _state.value = state.value.copy(it, false)
                 }
             }
         }

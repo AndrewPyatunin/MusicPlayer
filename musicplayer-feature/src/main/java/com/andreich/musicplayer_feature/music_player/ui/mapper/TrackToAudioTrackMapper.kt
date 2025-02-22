@@ -3,6 +3,8 @@ package com.andreich.musicplayer_feature.music_player.ui.mapper
 import android.net.Uri
 import com.andreich.domain.model.Track
 import com.andreich.musicplayer_feature.music_player.ui.AudioTrack
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 
 class TrackToAudioTrackMapper @Inject constructor() : ModelToUiMapper<Track, AudioTrack> {
@@ -19,7 +21,8 @@ class TrackToAudioTrackMapper @Inject constructor() : ModelToUiMapper<Track, Aud
                 artist = artist?.name ?: "",
                 album = album?.title ?: "",
                 duration = duration,
-                picture = Uri.parse(cover)
+                picture = Uri.parse(cover),
+                pictureBig = Uri.parse(coverBig ?: album?.coverBig)
             )
         }
     }

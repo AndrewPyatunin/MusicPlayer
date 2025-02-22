@@ -23,6 +23,7 @@ internal object DownloadManagerBuilder {
 
     private fun setDownloadDirectory(context: Context) {
         downloadDirectory = File(context.getExternalFilesDir(null).toString() + "/Music")
+//        downloadDirectory = File(context.cacheDir, "Music")
     }
 
     @Volatile
@@ -65,11 +66,10 @@ internal object DownloadManagerBuilder {
 
     @Synchronized
     fun getDownloadCache(context: Context): SimpleCache {
-        val cacheSize: Long = 1024 * 1024 * 100
+        val cacheSize: Long = 1024 * 1024 * 200
         if (downloadDirectory == null) {
             setDownloadDirectory(context)
         }
-        Log.d("MY_MUSIC_DIRECTORY", downloadDirectory.toString())
         if (!downloadDirectory!!.exists()) {
             downloadDirectory!!.mkdirs()
         }
@@ -88,7 +88,8 @@ internal object DownloadManagerBuilder {
         if (cacheDataSourceFactory == null) {
             cacheDataSourceFactory = CacheDataSource.Factory().setCache(getDownloadCache(context))
                 .setUpstreamDataSourceFactory(dataSourceFactory)
-                .setCacheWriteDataSinkFactory(CacheDataSink.Factory().setCache(getDownloadCache(context)))
+                .setCacheWriteDataSinkFactory(CacheDataSink.Factory().setCache(getDownloadCache(context))
+                ).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         }
         return cacheDataSourceFactory!!
     }

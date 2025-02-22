@@ -8,7 +8,7 @@ class SearchTrackUseCase(
     private val repository: MusicRepository
 ) {
 
-    operator fun invoke(query: String): Flow<List<Track>> {
+    operator fun invoke(query: String?): Flow<List<Track>> {
         return repository.searchTrack(query)
     }
 }

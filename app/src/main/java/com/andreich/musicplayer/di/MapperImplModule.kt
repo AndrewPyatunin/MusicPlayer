@@ -1,10 +1,14 @@
 package com.andreich.musicplayer.di
 
 import com.andreich.data.mapper.AlbumDataDtoToAlbumEntityMapper
+import com.andreich.data.mapper.AlbumDetailDtoMapper
 import com.andreich.data.mapper.AlbumDtoToAlbumEntityMapper
 import com.andreich.data.mapper.AlbumEntityToAlbumMapper
+import com.andreich.data.mapper.AlbumSearchDtoMapper
+import com.andreich.data.mapper.ArtistDetailDtoMapper
 import com.andreich.data.mapper.ArtistDtoToArtistEntityMapper
 import com.andreich.data.mapper.ArtistEntityToArtistMapper
+import com.andreich.data.mapper.ArtistSearchDtoMapper
 import com.andreich.data.mapper.CachedTrackEntityToCachedTrackMapper
 import com.andreich.data.mapper.DtoMapper
 import com.andreich.data.mapper.EntityToModelMapper
@@ -21,8 +25,12 @@ import com.andreich.musicplayer_database.entity.ArtistEntity
 import com.andreich.musicplayer_database.entity.CachedTrackEntity
 import com.andreich.musicplayer_database.entity.TrackEntity
 import com.andreich.musicplayer_network.network.pojo.AlbumDataDto
+import com.andreich.musicplayer_network.network.pojo.AlbumDetailDto
 import com.andreich.musicplayer_network.network.pojo.AlbumDto
+import com.andreich.musicplayer_network.network.pojo.AlbumSearchDto
+import com.andreich.musicplayer_network.network.pojo.ArtistDetailDto
 import com.andreich.musicplayer_network.network.pojo.ArtistDto
+import com.andreich.musicplayer_network.network.pojo.ArtistSearchDto
 import com.andreich.musicplayer_network.network.pojo.SearchTrackDto
 import com.andreich.musicplayer_network.network.pojo.TrackDetailDto
 import com.andreich.musicplayer_network.network.pojo.TrackDto
@@ -49,16 +57,28 @@ class MapperImplModule {
 
     @Provides
     fun provideSearchTrackDtoToTrackEntityMapper(
-        albumDtoMapper: DtoMapper<AlbumDto, AlbumEntity>,
-        artistDtoMapper: DtoMapper<ArtistDto, ArtistEntity>
+        albumDtoMapper: DtoMapper<AlbumSearchDto, AlbumEntity>,
+        artistDtoMapper: DtoMapper<ArtistSearchDto, ArtistEntity>
     ): DtoMapper<SearchTrackDto, TrackEntity> {
         return SearchTrackDtoMapper(albumDtoMapper, artistDtoMapper)
     }
 
     @Provides
+    fun provideAlbumSearchDtoToAlbumEntityMapper(
+    ): DtoMapper<AlbumSearchDto, AlbumEntity> {
+        return AlbumSearchDtoMapper()
+    }
+
+    @Provides
+    fun provideArtistSearchDtoToArtistEntityMapper(
+    ): DtoMapper<ArtistSearchDto, ArtistEntity> {
+        return ArtistSearchDtoMapper()
+    }
+
+    @Provides
     fun provideTrackDetailDtoToTrackEntityMapper(
-        albumDtoMapper: DtoMapper<AlbumDto, AlbumEntity>,
-        artistDtoMapper: DtoMapper<ArtistDto, ArtistEntity>
+        albumDtoMapper: DtoMapper<AlbumDetailDto, AlbumEntity>,
+        artistDtoMapper: DtoMapper<ArtistDetailDto, ArtistEntity>
     ): DtoMapper<TrackDetailDto, TrackEntity> {
         return TrackDetailDtoToTrackEntityMapper(albumDtoMapper, artistDtoMapper)
     }
@@ -93,4 +113,15 @@ class MapperImplModule {
     ): EntityToModelMapper<TrackEntity, Track> {
         return TrackEntityToTrackMapper(albumEntityToAlbumMapper, artistEntityToArtistMapper)
     }
+
+    @Provides
+    fun provideArtistDetailDtoMapper(): DtoMapper<ArtistDetailDto, ArtistEntity> {
+        return ArtistDetailDtoMapper()
+    }
+
+    @Provides
+    fun provideAlbumDetailDtoMapper(): DtoMapper<AlbumDetailDto, AlbumEntity> {
+        return AlbumDetailDtoMapper()
+    }
+
 }

@@ -37,25 +37,23 @@
 
         <TextView
             android:id="@+id/music_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
+            android:layout_marginStart="8dp"
             android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@id/guideline_music_item"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/music_name" />
 
         <TextView
             android:id="@+id/author_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/guideline_music_item"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/music_title"
             tools:text="@string/author" />
 

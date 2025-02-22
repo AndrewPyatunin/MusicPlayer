@@ -12,13 +12,15 @@ import com.andreich.musicplayer.MyApp
 import com.andreich.musicplayer.R
 import com.andreich.musicplayer.databinding.FragmentTabsBinding
 
-class TabsFragment: Fragment() {
+class TabsFragment : Fragment() {
 
     private lateinit var binding: FragmentTabsBinding
 
+    private val component by lazy { (activity?.application as MyApp).component }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity?.application as MyApp).component.inject(this)
+        component.inject(this)
     }
 
     override fun onCreateView(

@@ -10,6 +10,7 @@ data class Track(
     val artist: Artist? = null,
     val cover: String? = null,
     val filePath: String,
-    val duration: Int = 0,
-    val url: String? = null
+    val duration: Long = 0,
+    val url: String? = null,
+    val coverBig: String? = null
 )

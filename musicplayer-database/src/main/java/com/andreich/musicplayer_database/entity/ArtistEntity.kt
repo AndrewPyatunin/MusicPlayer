@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity("artistEntity")
 data class ArtistEntity(
     @PrimaryKey
-    val id: Int,
+    val id: Long,
     val name: String,
     val picture: String? = null,
     val pictureBig: String? = null,

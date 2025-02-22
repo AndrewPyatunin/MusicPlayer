@@ -1,7 +1,10 @@
 package com.andreich.musicplayer_feature.music_player.ui
 
 import android.net.Uri
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class AudioTrack(
     val id: Long,
     val url: String,
@@ -9,8 +12,9 @@ data class AudioTrack(
     val displayName: String,
     val artist: String,
     val data: String,
-    val duration: Int,
+    val duration: Long,
     val title: String,
     val album: String,
-    val picture: Uri? = null
-)
+    val picture: Uri? = null,
+    val pictureBig: Uri? = null
+): Parcelable

@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.andreich.domain.usecase.GetHomeTracksUseCase
 import com.andreich.domain.usecase.SearchHomeTrackUseCase
-import com.andreich.ui.BaseUiState
 import com.andreich.ui.BaseViewModel
 import com.andreich.ui.MusicItem
 import kotlinx.coroutines.launch
@@ -15,9 +14,9 @@ class MusicHomeViewModel @Inject constructor(
     private val getHomeTracksUseCase: GetHomeTracksUseCase
 ) : BaseViewModel() {
 
-    override fun searchTrack(query: String) {
+    override fun searchTrack(query: String?) {
         viewModelScope.launch {
-            searchTrackUseCase(query).map {
+            searchTrackUseCase(query ?: "").map {
                 with(it) {
                     MusicItem(
                         id = id,
@@ -32,7 +31,7 @@ class MusicHomeViewModel @Inject constructor(
                     )
                 }
             }.let {
-                _state.value = BaseUiState(it, false)
+                _state.value = state.value.copy(it, false)
             }
         }
 
@@ -55,7 +54,7 @@ class MusicHomeViewModel @Inject constructor(
                     )
                 }
             }.let {
-                _state.value = BaseUiState(it, false)
+                _state.value = state.value.copy(it, false)
             }
         }
 

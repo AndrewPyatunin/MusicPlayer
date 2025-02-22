@@ -8,7 +8,7 @@ class AlbumDtoToAlbumEntityMapper : DtoMapper<AlbumDto, AlbumEntity> {
     override fun map(fromDto: AlbumDto): AlbumEntity {
         return with(fromDto) {
             AlbumEntity(
-                id = id?.toIntOrNull() ?: 0,
+                id = id ?: 0,
                 title = title ?: "",
                 cover = cover,
                 coverBig = coverBig,

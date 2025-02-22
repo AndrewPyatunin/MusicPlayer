@@ -19,7 +19,7 @@ interface ApiService {
     suspend fun getChartTracks(): TracksDto
 
     @GET(SEARCH_URL)
-    suspend fun searchTrack(@Query(SEARCH_QUERY) query: String): SearchResultDto
+    suspend fun searchTrack(@Query(SEARCH_QUERY) query: String?): SearchResultDto
 
     @GET("$TRACK_URL/{$TRACK_ID}")
     suspend fun getTrack(@Path(TRACK_ID) trackId: Long): TrackDetailDto

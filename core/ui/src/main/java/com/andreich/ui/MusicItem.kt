@@ -9,8 +9,9 @@ data class MusicItem(
     val displayName: String,
     val artist: String,
     val data: String,
-    val duration: Int,
+    val duration: Long,
     val title: String,
     val album: String,
-    val cover: String? = null
+    val cover: String? = null,
+    val coverBig: String? = null
 )

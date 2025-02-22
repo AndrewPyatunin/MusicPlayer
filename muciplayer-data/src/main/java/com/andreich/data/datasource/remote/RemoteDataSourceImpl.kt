@@ -17,7 +17,7 @@ class RemoteDataSourceImpl(
         return apiService.getTrack(id)
     }
 
-    override suspend fun searchTrack(query: String): SearchResultDto {
-        return apiService.searchTrack(query)
+    override suspend fun searchTrack(query: String?): SearchResultDto {
+        return  apiService.searchTrack(query)
     }
 }

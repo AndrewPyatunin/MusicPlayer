@@ -2,9 +2,13 @@ package com.andreich.ui
 
 sealed interface BaseUiIntent {
 
-    object LoadTracks : BaseUiIntent
+    data object LoadTracks : BaseUiIntent
 
-    class ChooseTrack(val track: MusicItem) : BaseUiIntent
+    data object ClearStateNews : BaseUiIntent
 
-    class SearchTrack(val query: String) : BaseUiIntent
+    data object PermissionGranted : BaseUiIntent
+
+    data class ChooseTrack(val track: MusicItem) : BaseUiIntent
+
+    data class SearchTrack(val query: String) : BaseUiIntent
 }

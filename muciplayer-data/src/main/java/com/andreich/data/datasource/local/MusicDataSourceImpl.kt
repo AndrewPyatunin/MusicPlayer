@@ -20,11 +20,15 @@ class MusicDataSourceImpl(
         dao.clearTracks()
     }
 
-    override fun getTrack(id: Long): Flow<TrackEntity> {
-        return dao.getTrack(id)
+    override suspend fun getTracks(): List<TrackEntity> {
+        return dao.getTracks()
     }
 
-    override fun getSavedTracks(query: String?): Flow<List<TrackEntity>> {
+    override suspend fun getQueryTracks(query: String?): List<TrackEntity> {
         return dao.getTracks(query)
+    }
+
+    override fun getTrack(id: Long): Flow<TrackEntity> {
+        return dao.getTrack(id)
     }
 }

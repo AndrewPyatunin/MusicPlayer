@@ -10,5 +10,5 @@ interface RemoteDataSource {
 
     suspend fun getTrack(id: Long): TrackDetailDto
 
-    suspend fun searchTrack(query: String): SearchResultDto
+    suspend fun searchTrack(query: String?): SearchResultDto
 }

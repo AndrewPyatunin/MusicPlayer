@@ -40,7 +40,6 @@ class AudioContentResolver(
     @WorkerThread
     override fun searchTrack(query: String): List<AudioModel> {
         return getCursorData().filter {
-            val query = query.trim()
             it.title.contains(query, ignoreCase = true) || it.artist.contains(
                 query,
                 ignoreCase = true
@@ -87,7 +86,7 @@ class AudioContentResolver(
                         val id = getLong(idColumn)
                         val artist = getString(artistColumn)
                         val data = getString(dataColumn)
-                        val duration = getInt(durationColumn)
+                        val duration = getLong(durationColumn)
                         val title = getString(titleColumn)
                         val uri = ContentUris.withAppendedId(
                             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

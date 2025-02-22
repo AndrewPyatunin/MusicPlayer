@@ -1,7 +1,7 @@
 package com.andreich.musicplayer_feature.music_remote_list.ui
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.andreich.musicplayer_feature.MusicPlayerComponentDependencies
 import com.andreich.musicplayer_feature.common.ViewModelFactory
@@ -22,16 +22,11 @@ class MusicRemoteFragment : BaseSearchFragment() {
         component?.inject(this)
     }
 
-    override val viewModel: BaseViewModel by lazy {
-        ViewModelProvider(
-            this,
-            viewModelFactory
-        )[MusicRemoteViewModel::class]
-    }
+    override val viewModel: BaseViewModel by viewModels<MusicRemoteViewModel> { viewModelFactory }
 
     override fun navigate(musicItem: MusicItem) {
         findNavController().navigate(
-            MusicRemoteFragmentDirections.actionMusicRemoteFragmentToMusicPlayerFragment(
+            MusicRemoteFragmentDirections.actionMusicRemoteFragmentToMusicPlayerFragment2(
                 id = musicItem.id
             )
         )

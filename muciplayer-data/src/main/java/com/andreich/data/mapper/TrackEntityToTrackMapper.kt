@@ -19,9 +19,10 @@ class TrackEntityToTrackMapper(
                 title = title,
                 album = albumEntity?.let { albumEntityToAlbumMapper.map(it) },
                 artist = artistEntity?.let { artistEntityToArtistMapper.map(it) },
-                cover = cover,
+                cover = cover ?: albumEntity?.cover ?: albumEntity?.coverBig,
                 filePath = filePath,
-                duration = duration
+                duration = duration,
+                coverBig = albumEntity?.coverBig
             )
         }
     }

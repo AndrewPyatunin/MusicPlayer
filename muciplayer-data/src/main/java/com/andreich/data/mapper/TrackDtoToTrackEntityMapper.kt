@@ -1,6 +1,5 @@
 package com.andreich.data.mapper
 
-import android.util.Log
 import com.andreich.musicplayer_database.entity.AlbumEntity
 import com.andreich.musicplayer_database.entity.ArtistEntity
 import com.andreich.musicplayer_database.entity.TrackEntity
@@ -15,7 +14,6 @@ class TrackDtoToTrackEntityMapper(
 
     override fun map(fromDto: TrackDto): TrackEntity {
         return with(fromDto) {
-            Log.d("MUSIC_PLAYER_COVER", album?.cover ?: "")
             TrackEntity(
                 id = id ?: 0,
                 title = title ?: "",

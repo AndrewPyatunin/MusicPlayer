@@ -10,7 +10,7 @@ import dagger.BindsInstance
 import dagger.Component
 
 @Component(
-    modules = [MusicPlayerModule::class, UseCaseModule::class, ExoPlayerModule::class, ViewModelModule::class],
+    modules = [MusicPlayerModule::class, UseCaseModule::class, ViewModelModule::class, ExoPlayerModule::class],
     dependencies = [MusicPlayerFeatureDependencies::class]
 )
 interface MusicPlayerComponent {

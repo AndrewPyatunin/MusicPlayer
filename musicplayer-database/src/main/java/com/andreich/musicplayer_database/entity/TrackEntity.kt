@@ -13,5 +13,5 @@ data class TrackEntity(
     val artistEntity: ArtistEntity? = null,
     val cover: String? = null,
     val filePath: String,
-    val duration: Int = 0
+    val duration: Long = 0
 )

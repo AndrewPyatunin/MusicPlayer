@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ArtistDto(
 
-    @SerializedName("id") val id: Int? = null,
+    @SerializedName("id") val id: Long? = null,
     @SerializedName("name") val name: String? = null,
     @SerializedName("link") val link: String? = null,
     @SerializedName("share") val share: String? = null,

@@ -1,7 +1,6 @@
 package com.andreich.ui
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ object DiffCallback : DiffUtil.ItemCallback<MusicItem>() {
 class BaseMusicListAdapter :
     ListAdapter<MusicItem, BaseMusicListAdapter.MovieViewHolder>(DiffCallback) {
 
-    var onMovieClick: OnMusicTrackClickListener? = null
+    var onMusicClick: OnMusicTrackClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view =
@@ -39,9 +38,7 @@ class BaseMusicListAdapter :
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        Log.d("FRAGMENT_ADAPTER", "$position")
         val musicItem = getItem(position)
-        Log.d("MUSIC_VIEW_HOLDER", musicItem.toString())
         musicItem?.let {
             with(holder) {
                 musicTitle.text = musicItem.title
@@ -63,17 +60,27 @@ class BaseMusicListAdapter :
                             override fun onLoadCleared(placeholder: Drawable?) {
                                 shimmerItem.visibility = View.GONE
                                 musicImage.visibility = View.VISIBLE
-                                musicImage.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.music_default))
+                                musicImage.setImageDrawable(
+                                    ContextCompat.getDrawable(
+                                        holder.itemView.context,
+                                        R.drawable.music_default
+                                    )
+                                )
                             }
                         })
                 } else {
                     shimmerItem.visibility = View.GONE
                     musicImage.visibility = View.VISIBLE
-                    musicImage.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.music_default))
+                    musicImage.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.music_default
+                        )
+                    )
                 }
 
                 itemView.setOnClickListener {
-                    onMovieClick?.onMusicClick(musicItem)
+                    onMusicClick?.onMusicClick(musicItem)
                 }
             }
         }
@@ -87,6 +94,7 @@ class BaseMusicListAdapter :
         val musicTitle = itemView.findViewById<TextView>(R.id.music_title)
         val author = itemView.findViewById<TextView>(R.id.author_name)
     }
+
     interface OnMusicTrackClickListener {
 
         fun onMusicClick(musicItem: MusicItem)

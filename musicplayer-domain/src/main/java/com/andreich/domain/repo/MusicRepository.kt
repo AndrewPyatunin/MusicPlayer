@@ -5,13 +5,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface MusicRepository {
 
-    suspend fun getTrack(id: Long): Flow<Track>
 
     suspend fun clearDatabase()
 
-    fun getSavedTracks(query: String?): Flow<List<Track>>
+    suspend fun getSavedTracks(query: String?): List<Track>
 
-    fun searchTrack(query: String): Flow<List<Track>>
+    fun getRemoteTrack(id: Long): Flow<Track>
+
+    fun searchTrack(query: String?): Flow<List<Track>>
 
     fun getTracks(fromPlayer: Boolean): Flow<List<Track>>
 }

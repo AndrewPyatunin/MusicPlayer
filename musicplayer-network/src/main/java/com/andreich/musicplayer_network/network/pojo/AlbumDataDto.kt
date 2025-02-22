@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AlbumDataDto(
 
-    @SerializedName("id") var id: Int? = null,
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("title") var title: String? = null,
     @SerializedName("cover") var cover: String? = null,
     @SerializedName("cover_small") var coverSmall: String? = null,

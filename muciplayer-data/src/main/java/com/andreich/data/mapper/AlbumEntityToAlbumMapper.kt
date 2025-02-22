@@ -8,7 +8,7 @@ class AlbumEntityToAlbumMapper : EntityToModelMapper<AlbumEntity, Album> {
     override fun map(fromEntity: AlbumEntity): Album {
         return with(fromEntity) {
             Album(
-                id = id,
+                id = id.toInt(),
                 title = title,
                 cover = cover,
                 coverBig = coverBig,

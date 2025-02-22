@@ -31,6 +31,7 @@ kapt = "2.1.10"
 serialization = "2.1.10"
 serialization_json = "1.6.3"
 my_groovy = "1.0-SNAPSHOT"
+coreSplashscreen = "1.0.1"
 
 
 [libraries]
@@ -67,6 +68,7 @@ androidx-lifecycle-runtime-android = { group = "androidx.lifecycle", name = "lif
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization_json" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

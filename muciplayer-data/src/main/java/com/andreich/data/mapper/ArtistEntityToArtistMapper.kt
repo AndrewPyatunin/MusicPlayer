@@ -8,7 +8,7 @@ class ArtistEntityToArtistMapper : EntityToModelMapper<ArtistEntity, Artist> {
     override fun map(fromEntity: ArtistEntity): Artist {
         return with(fromEntity) {
             Artist(
-                id = id,
+                id = id.toInt(),
                 name = name,
                 picture = picture,
                 pictureBig = pictureBig,

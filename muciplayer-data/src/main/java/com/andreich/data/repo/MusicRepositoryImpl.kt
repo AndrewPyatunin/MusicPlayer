@@ -1,6 +1,5 @@
 package com.andreich.data.repo
 
-import android.util.Log
 import com.andreich.data.datasource.local.MusicDataSource
 import com.andreich.data.datasource.remote.RemoteDataSource
 import com.andreich.data.mapper.DtoMapper
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 
 class MusicRepositoryImpl(
     private val musicDataSource: MusicDataSource,
@@ -27,17 +25,12 @@ class MusicRepositoryImpl(
     private val chartTrackMapper: DtoMapper<TrackDto, TrackEntity>
 ) : MusicRepository {
 
-    override suspend fun getTrack(id: Long): Flow<Track> {
+    override fun getRemoteTrack(id: Long): Flow<Track> {
         return flow {
-            var localTrack = musicDataSource.getTrack(id).firstOrNull()
-            if (localTrack == null) {
-                val remoteTrack = remoteDataSource.getTrack(id)
-                musicDataSource.insertTrack(trackDetailDtoMapper.map(remoteTrack))
-                localTrack = musicDataSource.getTrack(id).firstOrNull()
-            }
-            if (localTrack == null) {
-                throw IllegalArgumentException("Track with id=$id not found in database.")
-            }
+            val remoteTrack = remoteDataSource.getTrack(id)
+            musicDataSource.insertTrack(trackDetailDtoMapper.map(remoteTrack))
+            val localTrack = musicDataSource.getTrack(id).firstOrNull()
+                ?: throw IllegalArgumentException("Track with id=$id not found in database.")
             emit(trackEntityToModelMapper.map(localTrack))
         }.flowOn(Dispatchers.IO)
     }
@@ -46,55 +39,47 @@ class MusicRepositoryImpl(
         musicDataSource.clearDatabase()
     }
 
-    override fun getSavedTracks(query: String?): Flow<List<Track>> {
-        return musicDataSource.getSavedTracks(query).map { trackList ->
-            trackList.filter {
+    override suspend fun getSavedTracks(query: String?): List<Track> {
+        return musicDataSource.getQueryTracks(query).filter {
                 it.filePath != ""
             }.map {
                 trackEntityToModelMapper.map(it)
             }
-        }
     }
 
-    private fun getSearchedTracks(query: String): Flow<List<Track>> {
-        return musicDataSource.getSavedTracks(query).map { trackList ->
-            trackList.map {
+    private suspend fun getSearchedTracks(query: String?): List<Track> {
+        return musicDataSource.getQueryTracks(query).map {
                 trackEntityToModelMapper.map(it)
             }
-        }
     }
 
-    override fun searchTrack(query: String): Flow<List<Track>> {
+    override fun searchTrack(query: String?): Flow<List<Track>> {
         return flow {
-            val tracks = remoteDataSource.searchTrack(query).data.map {
+            val searchResult = remoteDataSource.searchTrack(query)
+            val tracks = searchResult.data.apply {
+            }.map {
                 searchTrackDtoMapper.map(it)
             }
             musicDataSource.insertTrackList(tracks)
-            getSearchedTracks(query).collect {
+            getSearchedTracks(query).let {
                 emit(it)
             }
         }.flowOn(Dispatchers.IO)
     }
 
     override fun getTracks(fromPlayer: Boolean): Flow<List<Track>> {
-        Log.d("MUSIC_PLAYER_repo", "get_tracks_repository $fromPlayer")
         return flow {
             if (!fromPlayer) {
                 val tracks = remoteDataSource.getChartTracks().data.map {
-                    Log.d("MUSIC_PLAYER_network_tracks", it.toString())
                     chartTrackMapper.map(it)
                 }
-                Log.d("MUSIC_PLAYER_network_tracks_mapped", tracks.toString())
                 musicDataSource.insertTrackList(tracks)
-                Log.d("MUSIC_PLAYER_repo", "get_tracks ${tracks.toString()}")
             }
 
-            musicDataSource.getSavedTracks().collect { list ->
-                Log.d("MUSIC_PLAYER_network_tracks_saved", list.toString())
+            musicDataSource.getTracks().let { list ->
                 list.map {
                     trackEntityToModelMapper.map(it)
                 }.apply {
-                    Log.d("MUSIC_PLAYER_repo_emit", this.toString())
                     emit(this)
                 }
             }

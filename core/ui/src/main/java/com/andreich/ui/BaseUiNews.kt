@@ -2,9 +2,9 @@ package com.andreich.ui
 
 sealed interface BaseUiNews {
 
-    object Initial : BaseUiNews
+    data object Initial : BaseUiNews
 
-    class ShowToast(val message: String) : BaseUiNews
+    data class ShowToast(val message: String) : BaseUiNews
 
-    class NavigateTo(val route: MusicItem) : BaseUiNews
+    data class NavigateTo(val musicItem: MusicItem) : BaseUiNews
 }

@@ -4,6 +4,7 @@ import com.andreich.domain.repo.LocalRepository
 import com.andreich.domain.repo.MusicRepository
 import com.andreich.domain.usecase.GetHomeTracksUseCase
 import com.andreich.domain.usecase.GetRemoteTracksUseCase
+import com.andreich.domain.usecase.LoadTrackUseCase
 import com.andreich.domain.usecase.SearchHomeTrackUseCase
 import com.andreich.domain.usecase.SearchTrackUseCase
 import dagger.Module
@@ -28,7 +29,12 @@ class UseCaseModule {
     }
 
     @Provides
-    fun searchHomeTrackUseCase(repository: LocalRepository): SearchHomeTrackUseCase {
+    fun provideSearchHomeTrackUseCase(repository: LocalRepository): SearchHomeTrackUseCase {
         return SearchHomeTrackUseCase(repository)
+    }
+
+    @Provides
+    fun provideLoadTrackUseCase(repository: MusicRepository): LoadTrackUseCase {
+        return LoadTrackUseCase(repository)
     }
 }

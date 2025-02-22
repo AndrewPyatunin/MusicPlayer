@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AlbumDto(
 
-    @SerializedName("id") val id: String? = null,
+    @SerializedName("id") val id: Long? = null,
     @SerializedName("title") val title: String? = null,
     @SerializedName("link") val link: String? = null,
     @SerializedName("cover") val cover: String? = null,

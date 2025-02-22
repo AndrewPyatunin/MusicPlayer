@@ -14,7 +14,10 @@ interface MusicDao {
     fun getTrack(id: Long): Flow<TrackEntity>
 
     @Query("SELECT * FROM track WHERE title LIKE '%' || :query || '%' OR artistName  LIKE '%' || :query || '%' OR :query is NULL")
-    fun getTracks(query: String?): Flow<List<TrackEntity>>
+    fun getTracks(query: String?): List<TrackEntity>
+
+    @Query("SELECT * FROM track")
+    suspend fun getTracks(): List<TrackEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(trackEntity: TrackEntity)

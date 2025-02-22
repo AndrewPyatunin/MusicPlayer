@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 abstract class BaseViewModel : ViewModel() {
 
-    protected val _state = MutableStateFlow(BaseUiState(emptyList(), false))
+    protected val _state = MutableStateFlow(BaseUiState(emptyList(), true))
     val state = _state.asStateFlow()
 
     private val _news = MutableStateFlow<BaseUiNews>(BaseUiNews.Initial)
@@ -16,18 +16,26 @@ abstract class BaseViewModel : ViewModel() {
     fun sendIntent(intent: BaseUiIntent) {
         when (intent) {
             is BaseUiIntent.LoadTracks -> {
-                Log.d("MUSIC_TRACK", "loadTracksIntent")
-                loadTracks()
             }
 
             is BaseUiIntent.ChooseTrack -> navigateTo(intent.track)
 
-            is BaseUiIntent.SearchTrack -> searchTrack(query = intent.query)
+            is BaseUiIntent.SearchTrack -> {
+                _state.value = state.value.copy(audioList = emptyList(), isLoading = true)
+                searchTrack(query = intent.query.trim().let { if (it == "") null else it })
+            }
+
+            is BaseUiIntent.ClearStateNews -> _news.value = BaseUiNews.Initial
+
+            is BaseUiIntent.PermissionGranted -> {
+                _state.value = state.value.copy(isLoading = true)
+                loadTracks()
+            }
 
         }
     }
 
-    abstract fun searchTrack(query: String)
+    abstract fun searchTrack(query: String?)
 
     abstract fun loadTracks()
 

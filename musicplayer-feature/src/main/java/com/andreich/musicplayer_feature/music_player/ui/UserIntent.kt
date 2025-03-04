@@ -10,5 +10,7 @@ sealed interface UserIntent {
 
     object LoadRemoteTracks : UserIntent
 
+    object ClearStateNews : UserIntent
+
     data class LoadChosenTrack(val item: MediaItem) : UserIntent
 }

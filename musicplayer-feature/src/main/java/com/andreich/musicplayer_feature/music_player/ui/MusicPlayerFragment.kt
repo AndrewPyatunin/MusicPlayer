@@ -1,7 +1,10 @@
 package com.andreich.musicplayer_feature.music_player.ui
 
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -33,10 +36,12 @@ import com.andreich.musicplayer_feature.R
 import com.andreich.musicplayer_feature.common.ArgumentType
 import com.andreich.musicplayer_feature.common.ViewModelFactory
 import com.andreich.musicplayer_feature.databinding.FragmentMusicPlayerBinding
+import com.andreich.ui.BaseUiIntent
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -63,11 +68,22 @@ class MusicPlayerFragment : Fragment() {
         )
     }
 
+    private val playerSwitchReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == MusicService.ACTION_PLAYER_SWITCHED) {
+                val newType = ArgumentType.valueOf(intent.getStringExtra(MusicService.EXTRA_PLAYER_TYPE) ?: "HOME")
+                Log.d("MusicService_fragment", "Player switched to: $newType")
+                binding.playerView.player = controller
+            }
+        }
+    }
+
     private val controllerFuture by lazy {
+        Log.d("MusicService_fragment", "controllerFuture_lazy")
         MediaController.Builder(requireContext(), sessionToken).buildAsync()
     }
 
-    private val controller: MediaController by lazy { controllerFuture.get() }
+    private lateinit var controller: MediaController
 
     private val playerView: PlayerView by lazy { binding.playerView }
 
@@ -93,6 +109,8 @@ class MusicPlayerFragment : Fragment() {
                 viewModel.sendIntent(UserIntent.LoadHomeTracks)
             }
         }
+        val serviceIntent = Intent(context, MusicService::class.java)
+        requireContext().startService(serviceIntent)
     }
 
     override fun onCreateView(
@@ -113,6 +131,7 @@ class MusicPlayerFragment : Fragment() {
         playerView.player?.stop()
         controllerListener = null
         controller.removeListener(playerListener)
+        controller.release()
         _binding = null
         super.onDestroy()
     }
@@ -121,6 +140,15 @@ class MusicPlayerFragment : Fragment() {
         super.onStart()
         val serviceIntent = Intent(context, MusicService::class.java)
         requireContext().startService(serviceIntent)
+
+        val filter = IntentFilter(MusicService.ACTION_PLAYER_SWITCHED)
+        requireContext().registerReceiver(playerSwitchReceiver, filter,
+            Context.RECEIVER_NOT_EXPORTED)
+    }
+
+    override fun onStop() {
+        requireContext().unregisterReceiver(playerSwitchReceiver)
+        super.onStop()
     }
 
     private inline fun <T> List<T>.splitListIntoTwo(predicate: T.() -> Boolean): Pair<List<T>, List<T>> {
@@ -152,6 +180,8 @@ class MusicPlayerFragment : Fragment() {
     }
 
     private fun MusicPlayerState.createListener(): Runnable = Runnable {
+        Log.d("MusicService_fragment", "create_listener")
+        controller = controllerFuture.get()
         val mediaMetadata = controller.mediaMetadata
         with(binding) {
             albumTitle.text = mediaMetadata.albumTitle ?: "Unknown album"
@@ -207,15 +237,10 @@ class MusicPlayerFragment : Fragment() {
             if (cause is HttpDataSource.InvalidResponseCodeException) {
                 val responseCode = cause.responseCode
                 if (responseCode == 403) {
-                    Log.e(
-                        "ExoPlayer",
-                        "Ошибка 403: Доступ запрещен. Попробуйте обновить токен или проверить права."
-                    )
                     Handler(Looper.getMainLooper()).postDelayed({
                         controller.playWhenReady = false
                         controller.prepare()
                         controller.seekToNextMediaItem()
-                            .runCatching { /*controller.removeMediaItem(controller.previousMediaItemIndex)*/ }
 
                         controller.playWhenReady = true
                     }, 50)
@@ -223,12 +248,8 @@ class MusicPlayerFragment : Fragment() {
                     Log.e("ExoPlayer", "Ошибка при воспроизведении: ${error.message}")
                 }
             } else {
-                Log.e("ExoPlayer", "Неизвестная ошибка при воспроизведении: ${error.message}")
+                Log.e("ExoPlayer", "Ошибка при воспроизведении: ${error.message}")
             }
-            Log.e(
-                "ExoPlayer",
-                "Ошибка 403: Доступ запрещен. Попробуйте обновить токен или проверить права."
-            )
         }
 
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -265,6 +286,7 @@ class MusicPlayerFragment : Fragment() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
                     if (it.playList.isNotEmpty() || controllerListener == null) {
+                        Log.d("MusicService", "create_listener")
                         controllerListener = it.createListener()
                         controllerFuture.addListener(
                             controllerListener!!,
@@ -274,5 +296,30 @@ class MusicPlayerFragment : Fragment() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.news.collect {
+                    when (it) {
+                        is MusicPlayerNews.ChangePlayer -> {
+                            changePlayerType(it.playerType)
+                            viewModel.sendIntent(UserIntent.ClearStateNews)
+                        }
+                        MusicPlayerNews.InitialNews -> {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun changePlayerType(newType: ArgumentType) {
+        Log.d("MusicService_fragment", "Sending broadcast to switch player: $newType")
+
+        val intent = Intent(MusicService.ACTION_SWITCH_PLAYER).apply {
+            putExtra(MusicService.EXTRA_PLAYER_TYPE, newType.name)
+        }
+        requireContext().sendBroadcast(intent)
     }
 }

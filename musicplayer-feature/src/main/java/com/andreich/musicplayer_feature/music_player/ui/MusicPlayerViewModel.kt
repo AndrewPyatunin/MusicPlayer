@@ -11,6 +11,7 @@ import com.andreich.domain.model.Track
 import com.andreich.domain.usecase.GetHomeTracksUseCase
 import com.andreich.domain.usecase.GetRemoteTracksUseCase
 import com.andreich.domain.usecase.LoadTrackUseCase
+import com.andreich.musicplayer_feature.common.ArgumentType
 import com.andreich.musicplayer_feature.music_player.ui.mapper.ModelToUiMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,13 +30,27 @@ class MusicPlayerViewModel @Inject constructor(
     private val _state = MutableStateFlow(MusicPlayerState(emptyList()))
     val state = _state.asStateFlow()
 
+    private val _news = MutableStateFlow<MusicPlayerNews>(MusicPlayerNews.InitialNews)
+    val news = _news.asStateFlow()
+
     fun sendIntent(intent: UserIntent) {
         when (intent) {
-            is UserIntent.LoadHomeTracks -> loadHomeTracks()
-            is UserIntent.LoadRemoteTracks -> loadRemoteTracks()
-            is UserIntent.SaveState -> _state.value = state.value.copy(currentTrack = intent.mediaItem, position = intent.position)
+            is UserIntent.LoadHomeTracks -> {
+                _news.value = MusicPlayerNews.ChangePlayer(ArgumentType.HOME)
+                loadHomeTracks()
+            }
+
+            is UserIntent.LoadRemoteTracks -> {
+                _news.value = MusicPlayerNews.ChangePlayer(ArgumentType.REMOTE)
+                loadRemoteTracks()
+            }
+
+            is UserIntent.SaveState -> _state.value =
+                state.value.copy(currentTrack = intent.mediaItem, position = intent.position)
 
             is UserIntent.LoadChosenTrack -> downLoadTrackUseCase(intent.item)
+
+            is UserIntent.ClearStateNews -> _news.value = MusicPlayerNews.InitialNews
         }
     }
 
@@ -50,12 +65,12 @@ class MusicPlayerViewModel @Inject constructor(
                 return@launch
             }
             try {
-                 val track = loadTrackUseCase(track.id).first()
+                val track = loadTrackUseCase(track.id).first()
 
-                    _state.value = state.value.copy(
-                        currentTrack = null,
-                        loadedTrack = trackToAudioTrackMapper.map(track)
-                    )
+                _state.value = state.value.copy(
+                    currentTrack = null,
+                    loadedTrack = trackToAudioTrackMapper.map(track)
+                )
 
             } catch (e: Exception) {
                 Log.e("ExoPlayer", "Ошибка загрузки трека: ${e.message}")

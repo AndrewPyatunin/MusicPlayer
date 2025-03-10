@@ -49,17 +49,20 @@ class MusicRepositoryImpl(
 
     private suspend fun getSearchedTracks(query: String?): List<Track> {
         return musicDataSource.getQueryTracks(query).map {
-                trackEntityToModelMapper.map(it)
-            }
+            trackEntityToModelMapper.map(it)
+        }
+    }
+
+    private suspend fun getRemoteTracks(query: String?): List<TrackEntity> {
+        val searchResult = remoteDataSource.searchTrack(query)
+        return searchResult.data.map {
+            searchTrackDtoMapper.map(it)
+        }
     }
 
     override fun searchTrack(query: String?): Flow<List<Track>> {
         return flow {
-            val searchResult = remoteDataSource.searchTrack(query)
-            val tracks = searchResult.data.apply {
-            }.map {
-                searchTrackDtoMapper.map(it)
-            }
+            val tracks = getRemoteTracks(query)
             musicDataSource.insertTrackList(tracks)
             getSearchedTracks(query).let {
                 emit(it)

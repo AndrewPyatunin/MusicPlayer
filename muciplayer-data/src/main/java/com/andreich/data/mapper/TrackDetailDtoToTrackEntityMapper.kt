@@ -20,7 +20,7 @@ class TrackDetailDtoToTrackEntityMapper(
                 artistName = artist?.name ?: "",
                 albumEntity = album?.let { albumDtoMapper.map(it) },
                 artistEntity = artist?.let { artistDtoMapper.map(it) },
-                cover = if (preview == "") album.cover else preview,
+                cover = if (preview == "") album?.cover else preview,
                 filePath = fromDto.link ?: ""
             )
         }

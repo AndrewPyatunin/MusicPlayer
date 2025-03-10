@@ -4,7 +4,6 @@ import android.content.Context
 import com.andreich.domain.repo.LocalRepository
 import com.andreich.domain.repo.MusicRepository
 import com.andreich.musicplayer.ui.MainActivity
-import com.andreich.musicplayer.ui.MainViewModel
 import com.andreich.musicplayer.ui.TabsFragment
 import com.andreich.musicplayer_database.di.DatabaseModule
 import com.andreich.musicplayer_feature.MusicPlayerFeatureDependencies

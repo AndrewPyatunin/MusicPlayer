@@ -20,4 +20,8 @@ dependencies {
     implementation libs.gson
     implementation libs.coroutines
     implementation libs.serialization.json
+
+    testImplementation libs.coroutines.test
+    testImplementation libs.junit
+    testImplementation libs.mockito
 }
